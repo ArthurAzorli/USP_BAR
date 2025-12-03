@@ -1,4 +1,7 @@
-; ----------- Créditos e Observações ---------------------
+; ============================================================
+; Créditos e Observações
+; ============================================================
+
 
 ; Programador e idealizador: Arthur Gagliardi Azorli - Nº USP 16855452
 ; Idealizador e relatório: Marcos Vinicius - Nº USP 7576746
@@ -21,11 +24,13 @@
 
 ; Obrigado por jogar e avaliar o código! 
  
-; ----------- Créditos e Observações ---------------------
+; ============================================================
 
 jmp main
 
-; ----------- Inicio Tabela de Cores ----------------------
+; ============================================================
+; Definição Cores
+; ============================================================
 
 whiteColor : var #1
 static whiteColor, #0
@@ -72,13 +77,13 @@ static pinkColor, #3328
 cyanColor : var #1
 static cyanColor, #3584
 
-
-; ----------- Fim Tabela de Cores ------------------------
-
+; ============================================================
 
 
-; ----------- Inicio Definição Constantes------------------
 
+; ============================================================
+; Definição Constantes
+; ============================================================
 
 start : var #1
 static start, #0
@@ -104,13 +109,13 @@ static fillChar, #19
 cupBase : var #1
 static cupBase, #21
 
-
-
-; ----------- Fim Definição Constantes --------------------
+; ============================================================
 
 
 
-; ----------- Inicio Definição Componentes Jogo -----------
+; ============================================================
+; Definição Componentes do Jogo
+; ============================================================
 
 
 random : var #1
@@ -184,6 +189,13 @@ liquidLevels : var #10
 	static liquidLevels + #7, #0
 	static liquidLevels + #8, #0
 	static liquidLevels + #9, #0
+	
+; ============================================================	
+
+
+; ============================================================
+; Definição Mensagens/Dialógos do Jogo
+; ============================================================
 
 messagePressEnter : string "Press enter or space to continue..."
 messageOrderTitle : string "Pedido: "
@@ -210,22 +222,26 @@ dialogInitLine2 : string "  emprestimo de R$ 300.00 na  "
 dialogInitLine3 : string "  Kubank e dois meses depois  "
 dialogInitLine4 : string "  os juros aumetaram o valor  "
 dialogInitLine5 : string " para R$ 65000.00! Agora voce "
-dialogInitLine6 : string " trabalha em um Bar conseguir "
+dialogInitLine6 : string "    trabalha em um Bar para   "
 dialogInitLine7 : string "    pagar o que voce deve!    "
 dialogInitLine8 : string "      COMECE A TRABALHAR!     "
 
-; ----------- Fim Definição Componentes Jogo --------------
+; ============================================================
 
 
 
-; ----------- Inicio do Programa Principal ----------------
+; ============================================================
+; Programa Principal
+; ============================================================
 
 main:
 	
-
+	; dialogo inicial
 	call sadStoryDialog
 
+	; loop do jogo até chegar ao limite
 	_gameLoop:
+		; animação e fundo de novo pedido
 		loadn r0, #0
 		loadn r1, #Bar
 		load r2, whiteColor	
@@ -234,6 +250,7 @@ main:
 		
 		call clearScreen
 		
+		; popup para continuar 
 		load r0, jumpLn
 		loadn r1, #8
 		mul r0, r0, r1
@@ -241,10 +258,12 @@ main:
 		load r2, whiteColor 
 		call printLayer	
 	
+		; minigame para fazer o drink
 		call drinkGame
 		
 		call waitToContinue 
 		
+		;verifica se chegou ao limite
 		load r0, score
 		loadn r1, #65000
 		cmp r0, r1
@@ -255,18 +274,18 @@ main:
 	halt
 	
 	
-; ----------- Fim do Programa Principal -------------------	
+; ============================================================
 	
 	
 	
-; ----------- Inicio Subrotinas de Utilidade IO -----------  
+; ============================================================
+; Rotinas de Impressão
+; ============================================================
 
 
 
 ; --- PrintStr Routine ---
-
 ; @brief: rotina de impressão de textos na tela
-
 ; @param r0: posição de tela que iniciará a impressão do texto
 ; @param r1: enderço do vetor que contém o texto da string
 ; @param r2: cor do texto que será escrito
@@ -289,8 +308,6 @@ printStr:
 		add r4, r4, r2 ; adiciona cor ao texto
 		outchar r4, r0
 		inc r0
-		
-	_printStrIgn:	
 		inc r1
 		jmp _printStrLoop
 	
@@ -306,9 +323,7 @@ printStr:
 
 
 ; --- PrintStrSleeping Routine ---
-
 ; @brief: rotina de impressão de textos na tela pausadamente
-
 ; @param r0: posição de tela que iniciará a impressão do texto
 ; @param r1: enderço do vetor que contém o texto da string
 ; @param r2: cor do texto que será escrito
@@ -351,9 +366,7 @@ printStrSleeping:
 
 
 ; --- Print Layer Routine ---
-
 ; @brief: rotina de impressão de textos na tela
-
 ; @param r0: posição de inicio da impressão da tela
 ; @param r1: enderço do vetor que contém o texto da string da camada
 ; @param r2: cor do texto que será escrito
@@ -397,235 +410,220 @@ printLayer:
 
 
 ; --- Print Layer Limited Routine ---
-
-; @brief: rotina de impressão de textos na tela
-
-; @param r0: posição de inicio da impressão da tela
-; @param r1: enderço do vetor que contém o texto da string da camada
+; @brief: rotina de impressão de textos na tela até um limite de altura
+; @param r0: posição inicial da impressão na tela
+; @param r1: endereço do vetor que contém o texto da string da camada
 ; @param r2: cor do texto que será escrito
 ; @param r3: altura limite
 
 printLayerLimited: 
-	push r0 ; posição da tela em que o caractere será escrito
-	push r1 ; endereço do caractere que será escrito
-	push r2 ; cor em que mensagem será escrita 
-	push r3 ; altura de limite
-	push r4 ; caractere de comparação
-	push r5 ; caractere atual da impressão
-	push r6 ; posicao atual
+    push r0 ; posição da tela em que o caractere será escrito
+    push r1 ; endereço do caractere que será escrito
+    push r2 ; cor em que mensagem será escrita 
+    push r3 ; altura limite
+    push r4 ; caractere de comparação
+    push r5 ; caractere atual da impressão
+    push r6 ; posição atual
 
-	
-	load r6, jumpLn
-	mul r3, r3, r6
-	
-	loadn r6, #0
+    load r6, jumpLn        ; carrega valor de salto de linha
+    mul r3, r3, r6         ; calcula limite total em função da altura
+    loadn r6, #0           ; inicializa contador de posição
 
 	_printLayerLimitedLoop:
-		loadi r5, r1  ; seleciona caracter que será escrito
-		
-		cmp r3, r6
-		jeq _printLayerLimitedExit ; se chegou no limite
-		
-		
-		loadn r4, #'\0'
-		cmp r5, r4 
-		jeq _printLayerLimitedExit ; se for /0 termina de escrever
-		
-		load r4, spaceKey
-		cmp r5, r4
-		jeq _printLayerLimitedNext ; se for espaço não escreve nada e avança
-		
-		add r5, r5, r2 ; adiciona cor ao texto
-		outchar r5, r0
-		
-	_printLayerLimitedNext:	
-		inc r0
-		inc r1
-		inc r6
-		jmp _printLayerLimitedLoop
-	
+	    loadi r5, r1           ; pega caractere atual da string
+	    
+	    cmp r3, r6
+	    jeq _printLayerLimitedExit ; se chegou no limite, sai
+
+	    loadn r4, #'\0'
+	    cmp r5, r4
+	    jeq _printLayerLimitedExit ; se for fim de string, sai
+
+	    load r4, spaceKey
+	    cmp r5, r4
+	    jeq _printLayerLimitedNext ; se for espaço, não imprime
+
+	    add r5, r5, r2         ; adiciona cor ao caractere
+	    outchar r5, r0         ; imprime caractere na tela
+
+	_printLayerLimitedNext:
+	    inc r0 ; avança posição na tela
+	    inc r1 ; avança para próximo caractere
+	    inc r6 ; incrementa contador
+	    jmp _printLayerLimitedLoop
+
 	_printLayerLimitedExit:
-		pop r6	; retorna o valor anterior
-		pop r5
-		pop r4
-		pop r3
-		pop r2
-		pop r1
-		pop r0
-		rts
-	
+	    pop r6 ; restaura valores anteriores
+	    pop r5
+	    pop r4
+	    pop r3
+	    pop r2
+	    pop r1
+	    pop r0
+	    rts
+
 ; --- Print Layer Limited Routine ---
 
 
 ; --- Print Layer MultiLimited Routine ---
+; @brief: rotina de impressão de uma tela com limites de altura e largura
+; @param r0: posição inicial da tela
+; @param r1: endereço da tela que será impressa
+; @param r2: limite de altura
+; @param r3: limite de largura
 
 printMultiLimited:
-	push r0 ; posição da tela
-	push r1	; tela que será impressa	
-	push r2 ; limite de altura
-	push r3	; limite de largura	
-	push r4	; caractere atual da impressão	
-	push r5	; posição atual
-	push r6 ; auxiliar 
-	push r7 ; auxiliar
-	
-	load r7, jumpLn	
-	mul r2, r2, r7
-	
-	loadn r5, #0
-	loadn r6, #0
-	
-	_printMultiLimitedLoop:
-		loadi r4, r1
-		
-		cmp r2, r5 ; limitação vertical
-		jeq _printMultiLimitedExit
-		
-		loadn r7, #1200
-		cmp r0, r7
-		jeg _printMultiLimitedExit
-		
-		loadn r7, #'\0'
-		cmp r7, r4 ; se for \0 para de escrever
-		jeq	_printMultiLimitedExit 
-		
-		cmp r6, r3
-		jle _printMultiLimitedJumpPart
-		
-		load r7, spaceKey	
-		cmp r7, r4 ; jump espaços vazios
-		jeq	_printMultiLimitedNextChar	
-		
-		
-		load r7, jumpLn
-		cmp r6, r7
-		jeq _printMultiLimitedEndLine 
-		
-		outchar r4, r0
-		
-	_printMultiLimitedNextChar:
-		inc r0
-		inc r1
-		inc r5
-		inc r6
-		jmp _printMultiLimitedLoop
-		
-	_printMultiLimitedJumpPart:		
-		inc r1
-		inc r5
-		inc r6
-		jmp _printMultiLimitedLoop
-		
-	_printMultiLimitedEndLine:	
-		loadn r6, #0
-		add r0, r0, r3
-		jmp _printMultiLimitedLoop		
+    push r0 ; posição da tela
+    push r1 ; tela que será impressa
+    push r2 ; limite de altura
+    push r3 ; limite de largura
+    push r4 ; caractere atual
+    push r5 ; posição atual
+    push r6 ; auxiliar
+    push r7 ; auxiliar
 
-		
-		
+    load r7, jumpLn
+    mul r2, r2, r7         ; calcula limite vertical
+    loadn r5, #0           ; inicializa posição atual
+    loadn r6, #0           ; inicializa auxiliar
+
+	_printMultiLimitedLoop:
+	    loadi r4, r1           ; pega caractere da tela
+
+	    cmp r2, r5
+	    jeq _printMultiLimitedExit ; se atingiu limite vertical, sai
+
+	    loadn r7, #1200
+	    cmp r0, r7
+	    jeg _printMultiLimitedExit ; se posição excede tela, sai
+
+	    loadn r7, #'\0'
+	    cmp r7, r4
+	    jeq _printMultiLimitedExit ; fim da string
+
+	    cmp r6, r3
+	    jle _printMultiLimitedJumpPart ; se excedeu largura, pula
+
+	    load r7, spaceKey
+	    cmp r7, r4
+	    jeq _printMultiLimitedNextChar ; ignora espaços
+
+	    load r7, jumpLn
+	    cmp r6, r7
+	    jeq _printMultiLimitedEndLine ; se for quebra de linha, ajusta
+
+	    outchar r4, r0 ; imprime caractere
+
+	_printMultiLimitedNextChar:
+	    inc r0 ; avança posição na tela
+	    inc r1 ; avança para próximo caractere
+	    inc r5 ; incrementa posição vertical
+	    inc r6 ; incrementa posição horizontal
+	    jmp _printMultiLimitedLoop
+
+	_printMultiLimitedJumpPart:
+	    inc r1 ; avança sem imprimir
+	    inc r5
+	    inc r6
+	    jmp _printMultiLimitedLoop
+
+	_printMultiLimitedEndLine:
+	    loadn r6, #0
+	    add r0, r0, r3 ; ajusta posição para próxima linha
+	    jmp _printMultiLimitedLoop
+
 	_printMultiLimitedExit:
-		pop r7	
-		pop r6
-		pop r5
-		pop r4
-		pop r3
-		pop r2
-		pop r1
-		pop r0
-		rts			
-	
-	 
+	    pop r7
+	    pop r6
+	    pop r5
+	    pop r4
+	    pop r3
+	    pop r2
+	    pop r1
+	    pop r0
+	    rts
 
 ; --- Print Layer MultiLimited Routine ---
 
 
 ; --- printCharSeq Routine ---
-
-; @brief: impreme um caractere n vezes
-
-; @param r0: posição da tela em que a sequência de caracteres começa
+; @brief: imprime um caractere repetido n vezes
+; @param r0: posição inicial da tela
 ; @param r1: caractere que será escrito
 ; @param r2: cor do caractere
-; @param r3: tamanho da sequência de caracteres
+; @param r3: quantidade total de vezes
 
-printCharSeq: 
-	push r0 ; posição da tela em que o caractere será escrito
-	push r1 ; caractere que será escrito
-	push r2 ; cor em que mensagem será escrita 
-	push r3 ; quantidade de vezes total
-	push r4 ; quantidade de vezes atual
-	
-	
+printCharSeq: 	
+	push r0 ; posição inicial na tela
+	push r1 ; caractere a ser escrito
+	push r2 ; cor aplicada ao caractere
+	push r3 ; quantidade total
+	push r4 ; contador atual
+
 	loadn r4, #0
-	add r1, r1, r2 ; adiciona cor ao texto
-	
+	add r1, r1, r2 ; aplica cor ao caractere
+
 	_printCharSeqLoop:
-	
-		cmp r4, r3 
-		jeg _printCharSeqExit 
+		cmp r4, r3
+		jeg _printCharSeqExit ; se já escreveu tudo, sai
 		inc r4
-		
-		outchar r1, r0		
-		inc r0
-		
+
+		outchar r1, r0 ; imprime caractere
+		inc r0         ; avança posição na tela
+
 		jmp _printCharSeqLoop
-	
+
 	_printCharSeqExit:
-		pop r4 ; retorna o valor anterior
+		pop r4
 		pop r3
 		pop r2
 		pop r1
 		pop r0
 		rts
-	
+
 ; --- printCharSeq Routine ---
-	
+
 
 ; --- PrintInt Routine ---
+; @brief: imprime um número inteiro na tela
+; @param r0: posição inicial da tela
+; @param r1: valor inteiro a ser impresso
+; @param r2: cor do texto
 
-; @brief: rotina de impressão de inteiros na tela
+printInt: 	
+	push r0 ; posição inicial
+	push r1 ; valor inteiro
+	push r2 ; cor aplicada
+	push r3 ; ordem numérica atual
+	push r4 ; base decimal
+	push r5 ; algarismo atual
+	push r6 ; caractere inicial '0'
 
-; @param r0: posição de tela que iniciará a impressão do inteiro
-; @param r1: valor inteiro que será impresso
-; @param r2: cor do texto que será escrito
-
-printInt: 
-	push r0 ; posição da tela em que o caractere será escrito
-	push r1 ; valor inteiro que será impresso
-	push r2 ; cor em que mensagem será escrita 
-	push r3 ; ordem numérica do algorismo atual + 1
-	push r4 ; radix do inteiro
-	push r5 ; lista inversa dos algarismos 
-	push r6 ; caractere inicial dos algarismos
-	
 	loadn r3, #1   ; ordem das unidades
-	loadn r4, #10  ; base decimal 
-	loadn r6, #'0' ; caractere 0
+	loadn r4, #10  ; base decimal
+	loadn r6, #'0' ; caractere '0'
 
-	_printIntLoop: ; separa e encadeia os algarismos do número das unidades para frente
-		
+	_printIntLoop: ; separa algarismos
 		mod r5, r1, r4
 		div r1, r1, r4
-		jz _printIntOutputLoop ; se zero a esquerda, começa a escrever
-		
+		jz _printIntOutputLoop ; se não há mais dígitos, começa a escrever
+
 		push r5
 		inc r3
 		jmp _printIntLoop
-		
-	_printIntOutputLoop: ; escreve cada algarismo encadeado
 
-		add r5, r5, r6 ; converte o algarismo em caracter
-		add r5, r5, r2 ; adiciona cor ao texto 
-		
-		outchar r5, r0
+	_printIntOutputLoop: ; escreve algarismos
+		add r5, r5, r6 ; converte número em caractere
+		add r5, r5, r2 ; aplica cor
+		outchar r5, r0 ; imprime
 		inc r0
-		 
-		pop r5 ; pega o proximo algarismo
+
+		pop r5 ; pega próximo algarismo
 		dec r3
-		jz _printIntExit ; se escreveu até as unidades para
-		jmp _printIntOutputLoop ; senão continua
-	
-	_printIntExit:	; retorna o valor anterior
+		jz _printIntExit ; se terminou, sai
+		jmp _printIntOutputLoop
+
+	_printIntExit:
 		pop r6
 		pop r4
 		pop r3
@@ -633,177 +631,193 @@ printInt:
 		pop r1
 		pop r0
 		rts
-	
-; --- PrintInt Routine ---	
-	
-	
+
+; --- PrintInt Routine ---
+
+
 ; --- Input Random Routine ---
-
-; @brief: espera a entrada de um enter ou space para gerar um númro aleatório
-
-; @param r3: limite do valor aleatorio 	
+; @brief: espera ENTER ou SPACE e gera número aleatório
+; @param r3: limite superior do valor aleatório
 
 inputRandom:
-	push r0 ; valor aleatorio
+	push r0 ; valor aleatório
 	push r1 ; caractere lido
-	push r2 ; caractere de comparação para parada
-	push r3 ; limite superior da seed do número
-	
-	load r0, random   ; carrega valor aleatório
-	
-	_inputRandomLoop:
-			
-		inchar r1
-		
-		load r2, enterKey ; carrega o critério de parada 1
-		cmp r1, r2
-		jeq _inputRandomExit
-		
-		load r2, spaceKey ; carrega o critério de parada 2 
-		cmp r1, r2
-		jeq _inputRandomExit
+	push r2 ; critério de parada
+	push r3 ; limite superior
 
-		inc r0
-		jmp _inputRandomLoop	
-	
+	load r0, random ; carrega seed inicial
+
+	_inputRandomLoop:
+		inchar r1 ; lê entrada
+
+		load r2, enterKey
+		cmp r1, r2
+		jeq _inputRandomExit ; se ENTER, sai
+
+		load r2, spaceKey
+		cmp r1, r2
+		jeq _inputRandomExit ; se SPACE, sai
+
+		inc r0 ; incrementa seed
+		jmp _inputRandomLoop
+
 	_inputRandomExit:
-		mod r0, r0, r3
-		store random, r0
+		mod r0, r0, r3 ; aplica limite
+		store random, r0 ; salva novo valor
 
 		pop r3
 		pop r2
 		pop r1
-		pop r0	
+		pop r0
 		rts
-	
-; --- Input Random Routine ---	
+
+; --- Input Random Routine ---
 
 
 ; --- Input Char Routine ---
-
-; @brief: lê um caractere, com parada da execução
+; @brief: lê um caractere com parada da execução
 
 inputChar:
 	push r0 ; caractere lido
 	push r1 ; caractere vazio
 
-	load r1, emptyKey 
-	
-	_inputCharWaitPressLoop: ; espera algo ser digitado
+	load r1, emptyKey ; define tecla vazia
+
+	_inputCharWaitPressLoop: ; espera pressionar
 		inchar r0
-		
 		cmp r1, r0
 		jeq _inputCharWaitPressLoop
-		
-		store char, r0
 
-	_inputCharWaitRealeseLoop: ; espera terminar de digitar
+		store char, r0 ; salva caractere
+
+	_inputCharWaitRealeseLoop: ; espera soltar
 		inchar r0
-		
 		cmp r0, r1
 		jne _inputCharWaitRealeseLoop
-	
+
 	_inputCharExit:
 		pop r1
 		pop r0
-		rts 	
-	
-; --- Input Char Routine ---		
+		rts
+
+; --- Input Char Routine ---
 
 
 ; --- Input Char or Timeout Routine ---
-
-; @brief: lê um caractere, com parada da execução, por uma qquantidade limite de vezes
+; @brief: lê um caractere ou sai após tempo limite
+; @param r2: tempo limite
+; @param r3: contador byte 1
+; @param r4: contador byte 2
 
 inputCharTimeout:
 	push r0 ; caractere lido
 	push r1 ; caractere vazio
 	push r2 ; tempo limite
-	push r3 ; tempo atual byte 1
-	push r4 ; tempo atual byte 2
+	push r3 ; contador byte 1
+	push r4 ; contador byte 2
 
-	load r1, emptyKey 
+	load r1, emptyKey
 	loadn r3, #0
 	loadn r4, #0
-	
-	
-	_inputCharTimeoutWaitPressLoop: ; espera algo ser digitado
+
+	_inputCharTimeoutWaitPressLoop:
 		inchar r0
 		inc r3
-		
+
 		loadn r2, #65535
 		cmp r3, r2
-		jeq _verifyByte2TimeoutInput		
-		
+		jeq _verifyByte2TimeoutInput ; se estourou byte 1, verifica byte 2
+
 	_inputCharTimeoutVerifyPress:
-		
 		cmp r1, r0
 		jeq _inputCharTimeoutWaitPressLoop
-		
-		store char, r0
 
-	_inputCharTimeoutWaitRealeseLoop: ; espera terminar de digitar
+		store char, r0 ; salva caractere
+
+	_inputCharTimeoutWaitRealeseLoop:
 		inchar r0
-		
 		cmp r0, r1
 		jne _inputCharWaitRealeseLoop
 		jmp _inputCharTimeoutExit
-		
+
 	_verifyByte2TimeoutInput:
 		loadn r3, #0
 		inc r4
-		
+
 		loadn r2, #2
 		cmp r4, r2
 		jne _inputCharTimeoutVerifyPress
-		
-		
+
 	_timeoutInputChar:
-		store char, r1
-			
-	
+		store char, r1 ; salva vazio se timeout
+
 	_inputCharTimeoutExit:
 		pop r4
 		pop r3
 		pop r2
 		pop r1
 		pop r0
-		rts 	
+		rts
+
+; --- Input Char or Timeout Routine ---
+
+
+; --- Clear Screen Routine ---
+; @brief: limpa a tela inteira
+
+clearScreen:
+	push r0 ; posição inicial
+	push r1 ; conteúdo vazio
+	push r2 ; cor padrão
 	
-; --- Input Char or Timeout Routine ---	
+	load  r0, start        ; posição inicial da tela
+	loadn r1, #EmptyScreen ; string de tela vazia
+	load  r2, whiteColor   ; cor padrão (branco)
+	call printStr          ; imprime string de tela vazia
+	
+	pop r0
+	pop r1
+	pop r2
+	rts
+
+; --- Clear Screen Routine ---	
+
+; ============================================================
+
+; ============================================================
+; Rotinas de Tempo/Espera
+; ============================================================
 
 
 ; --- sleep timer ---
-
 ; @brief: espera um determinado tempo para continuar a execução
 ; @param r4: tempo que será aguardado
 
 sleepTimer:
 	push r0 ; entrada de caractere
-	push r1 ; tempo passado do primriro uint16
+	push r1 ; tempo passado do primeiro uint16
 	push r2 ; tempo limite para o primeiro uint16
 	push r3 ; tempo passado do segundo uint16
 	push r4 ; tempo limite para o segundo uint16
 	
-	loadn r3, #0
-	loadn r2, #65535
+	loadn r3, #0        ; inicializa contador secundário
+	loadn r2, #65535    ; limite máximo do primeiro contador (uint16)
 	
 	_sleepTimerLoop:
-		inchar r0
-		inc r1
+		inchar r0        ; leitura de entrada (mantém loop ativo)
+		inc r1           ; incrementa contador primário
 		
 		cmp r1, r2
-		jne _sleepTimerLoop	
+		jne _sleepTimerLoop ; se não atingiu limite, continua loop
 		
-	
 	_verifyDefinedTime:
-		loadn r1, #0
+		loadn r1, #0     ; reinicia contador primário
 		
-		inc r3
+		inc r3           ; incrementa contador secundário
 		cmp r3, r4
-		jne _sleepTimerLoop	
+		jne _sleepTimerLoop ; se não atingiu tempo definido, continua
 		
-	_sleepTimerExit:	
+	_sleepTimerExit:
 		pop r4
 		pop r3
 		pop r2
@@ -814,159 +828,139 @@ sleepTimer:
 ; --- sleep timer ---	
 
 
-; --- Clear Screen Routine ---	
-
-; @brief: limpa a tela 
-
-clearScreen:
-	push r0
-	push r1
-	push r2
-	
-	load  r0, start
-	loadn r1, #EmptyScreen
-	load  r2, whiteColor
-	call printStr
-	
-	pop r0
-	pop r1
-	pop r2
-	rts
-
-; --- Clear Screen Routine ---	
-
-
 ; --- Wait Continue Routine ---
-
-; @brief: aguarda digitar enter ou espaço para continuar
+; @brief: aguarda digitar ENTER ou SPACE para continuar
 
 waitToContinue:
-	push r0
-	push r1
+	push r0 ; caractere lido
+	push r1 ; critério de parada
 	
 	_waitToContinueLoop:
+		call inputChar    ; lê caractere
+		load r0, char     ; carrega último caractere digitado
 		
-		call inputChar
-		load r0, char
-		
-		load r1, enterKey ; carrega o critério de parada 1
+		load r1, enterKey ; critério de parada 1
 		cmp r0, r1
 		jeq _waitToContinueExit
 		
-		load r1, spaceKey ; carrega o critério de parada 2 
+		load r1, spaceKey ; critério de parada 2
 		cmp r0, r1
 		jeq _waitToContinueExit	
-		
+	
 	_waitToContinueExit:
 		pop r1
 		pop r0
 		rts		
 
-
 ; --- Wait Continue Routine ---
 	
+; ===========================================================
 
-; ----------- Fim Rotinas de Utilidade IO ----------------
 
+; ============================================================
+; Sistema Principal do Jogo
+; ============================================================
 
-; ----------- Inicio Rotinas do Sistema de Drinks --------
 
 
 ; --- Minigame Drink Routine ---
-
 ; @brief: inicia mini game de fazer drinks
 
 drinkGame:		
-			
-	call SelectOrder
-	call selectCup
-	call printScore
-	call printOrder
-	call printRecipeClear	
-	call printShowLiquids	
+	call SelectOrder        ; seleciona ordem do drink
+	call selectCup          ; seleciona copo
+	call printScore         ; imprime pontuação atual
+	call printOrder         ; imprime ordem do drink
+	call printRecipeClear   ; limpa receita
+	call printShowLiquids   ; mostra líquidos disponíveis
+	
 	_drinkGameLoop:
-		call selectLiquid
+		call selectLiquid    ; seleciona líquido
 		
 		load r0, char
 		load r1, emptyKey
 		cmp r0, r1
-		jeq _drinkGameLoop
-					
-		call fillCup
+		jeq _drinkGameLoop   ; se não houve entrada, continua loop
+		
+		call fillCup         ; adiciona líquido ao copo
 		
 		load r0, liquidHeight
 		loadn r1, #10
 		cmp r0, r1
-		jne _drinkGameLoop
+		jne _drinkGameLoop   ; se não atingiu altura máxima, continua
 		
-	
 	_drinkGameExit:		
-		call verifyDrinkScore
-		call printScore
-		call waitToContinue
+		call verifyDrinkScore ; verifica pontuação do drink
+		call printScore       ; imprime pontuação final
+		call waitToContinue   ; espera usuário continuar
 		rts	
 	
 ; --- Minigame Drink Routine ---
 
 
-; --- Select Cup Type Routine ---	
-
-; @ brief: seleciona o copo que será utilizado para o drink
-; @ return r1: tela do copo escolhido
+; --- Select Cup Type Routine ---
+; @brief: seleciona o copo que será utilizado para o drink
+; @return r1: tela do copo escolhido
 
 selectCup:
-	
 	push r0 ; posição de escrita
-	push r1 ; auxiliar / tela de saida
+	push r1 ; auxiliar / tela de saída
 	push r2 ; auxiliar
 	push r3 ; caractere lido para seleção
 	
-	_selectCupPrint:
+	_selectCupPrint: ; exibe a tela de copos
 		call clearScreen
 		
 		load  r0, jumpLn
 		loadn r1, #8
 		mul r0, r0, r1
 		
-		call printRecipeClear
+		call printRecipeClear ; remove as receitas da tela
+		
 		loadn r1, #SelectCups 
 		load  r2, whiteColor
 		call printLayer
+		
+		; exibe o HUD com a pontuação e peidido 
 		call printScore
 		call printOrder
 	
 	_selectCupLoop:		
-
-		call inputChar
+		call inputChar        ; lê a opção desejada
 		load r3, char
 		
+		; mostra receitas se 'q'
 		loadn r1, #'q'
 		cmp r3, r1
-		ceq showRecipes
+		ceq showRecipes       
 		
 		loadn r1, #SelectCups 
 		load  r2, whiteColor
 		call printLayer
 		
-		loadn r1, #'0'
+		; converter em inteiro
+		loadn r1, #'0'        
 		sub r3, r3, r1
 		
-		loadn r1, #1
+		; seleciona copo 1
+		loadn r1, #1          
 		cmp r3, r1
 		jeq _selectCup1
 		
+		; seleciona copo 2
 		loadn r1, #2
 		cmp r3, r1
 		jeq _selectCup2
 		
+		; seleciona copo 3
 		loadn r1, #3
 		cmp r3, r1
 		jeq _selectCup3
 		
+		; default
 		jmp _selectCupLoop
 		
-	_selectCup1:
-		
+	_selectCup1: ; setta configurações para exibir/encher o copo 1
 		loadn r1, #Cup1
 		
 		loadn r2, #1
@@ -977,8 +971,7 @@ selectCup:
 		
 		jmp _initSelectCup
 	
-	_selectCup2:
-		
+	_selectCup2: ; setta configurações para exibir/encher o copo 2
 		loadn r1, #Cup2
 		
 		loadn r2, #4
@@ -989,8 +982,7 @@ selectCup:
 		
 		jmp _initSelectCup
 		
-	_selectCup3:
-		
+	_selectCup3: ; setta configurações para exibir/encher o copo 3
 		loadn r1, #Cup3
 		
 		loadn r2, #11
@@ -1001,10 +993,8 @@ selectCup:
 		
 		jmp _initSelectCup		
 		
-	_initSelectCup:
-		
+	_initSelectCup: ; inicia copo slecionado
 		call clearScreen
-		
 		
 		load r0, jumpLn
 		loadn r2, #11
@@ -1013,7 +1003,7 @@ selectCup:
 		load r2, whiteColor
 		call printLayer
 		
-		; zera variaveis de progresso
+		; zera variáveis de progresso
 		loadn r2, #0
 		store liquidHeight, r2
 		store liquid1Count, r2
@@ -1042,9 +1032,11 @@ selectCup:
 		inc r0
 		storei r0, r2 ;9
 		
+		; salva o tipo do copo atual
 		store cupType, r3
 		
-		pop r3
+		
+		pop r3 ; volta valores anteriores
 		pop r2
 		pop r1
 		pop r0
@@ -1054,8 +1046,7 @@ selectCup:
 
 
 ; --- Select Liquid Type Routine ---
-
-; @brief: seleciona o proximo drink que será adicionado a bebida
+; @brief: seleciona o próximo líquido que será adicionado ao drink
 
 selectLiquid:
 	push r0 ; caractere lido
@@ -1063,62 +1054,71 @@ selectLiquid:
 	push r2 ; contador 
 	
 	loadn r2, #1
-
 	
 	_selectLiquidLoop:
-	
 		call inputCharTimeout
 		load r0, char
 		
-		loadn r1, #'q'
+		; 'q' para exibir as receitas
+		loadn r1, #'q' 
 		cmp r0, r1
 		ceq showRecipes
+	
 		cmp r0, r1
 		ceq printShowLiquids
 		
+		; verifica se encheu o copo
 		inc r2
 		loadn r1, #12
 		mod r2, r2, r1
 		jnz _selectLiquidLoop
 		
+		; se soltou o botão de encher, remove a garrafa
 		load r1, emptyKey
 		cmp r0, r1
 		ceq clearBottleLayer
 		
+		; coverte em inteiro
 		loadn r1, #'0'
 		sub r0, r0, r1
 		
+		; seleciona liquido 1
 		loadn r1, #1
 		cmp r0, r1
 		jeq _selectLiquidExit
 		
+		; seleciona liquido 2
 		loadn r1, #2
 		cmp r0, r1
 		jeq _selectLiquidExit
 		
+		; seleciona liquido 3
 		loadn r1, #3
 		cmp r0, r1
 		jeq _selectLiquidExit
 		
+		; seleciona liquido 4
 		loadn r1, #4
 		cmp r0, r1
 		jeq _selectLiquidExit
 		
+		; default
 		loadn r1, #0
 		jmp _selectLiquidLoop
 		
 	_selectLiquidExit:
-
+		; coloca o liquido atual pelo selecionado
 		store liquidType, r1
 		
+		; coloca o liquido adicionado na sua camada lógica
 		loadn r0, #liquidLevels
 		load  r2, liquidHeight
 		add r0, r0, r2
-		
 		storei r0, r1
 		
 		call printClearShowLiquids	
-
+		
+		; volta valores dos registradores
 		pop r2
 		pop r1
 		pop r0
@@ -1126,100 +1126,108 @@ selectLiquid:
 				
 ; --- Select Liquid Type Routine ---
 
-			
-; --- Clear Bottle Layer Routine ---	
 
+; --- Clear Bottle Layer Routine ---	
 ; @brief: remove a garrafa da tela, sem apagar o resto
 
 clearBottleLayer:
 	push r0 ; posição da tela em que será escrito a garrafa
 	push r1 ; auxiliar / tela sem a garrafa
 	push r2 ; cor do texto
-	push r3
+	push r3 ; flag de necessidade de limpar garrafa
 	
-	load r3, needClearBottle
-	loadn r2, #1
+	; verifica se é necessário limpar a garrafa
+	load r3, needClearBottle 
+	loadn r2, #1             
 	cmp r2, r3
-	jne _clearBottleLayer
+	jne _clearBottleLayer 
 	
-	load r0, jumpLn
-	loadn r1, #4
-	mul r0, r0, r1
+	load r0, jumpLn 
+	loadn r1, #4 
+	mul r0, r0, r1          
 	
-	loadn r1, #RemoveBottle
-	load  r2, whiteColor
+	; remove a garrafa
+	loadn r1, #RemoveBottle 
+	load  r2, whiteColor     
 	call printLayer
 	
-
-	loadn r1, #RemoveLiquid
+	; imprime camada sem líquido
+	loadn r1, #RemoveLiquid 
 	load  r2, whiteColor
 	call printLiquid
 	
+	; atualiza exibição dos líquidos disponíveis
 	call printShowLiquids
 	
 	_clearBottleLayer:
+		; reseta flag de necessidade de limpar garrafa
 		loadn r2, #0
 		store needClearBottle, r2
 		
+		; restaura registradores
 		pop r3
-		pop r2 ; volta os valores anteriores
+		pop r2
 		pop r1
 		pop r0
 		rts
 	
 ; --- Clear Bottle Layer Routine ---	
-	
-	
-; --- Print Score ---	
-	
+
+
+; --- Print Score ---
+; @brief: imprime a pontuação atual na tela
+
 printScore:
-	push r0
-	push r1
-	push r2
+	push r0 ; posição inicial
+	push r1 ; caractere auxiliar
+	push r2 ; cor aplicada
 	
+	; imprime prefixo "R$"
 	load r0, jumpLn
 	loadn r1, #1
 	mul r0, r0, r1
 	
 	inc r0
-	loadn r1, #'R'
+	loadn r1, #'R'       
 	outchar r1, r0
 	inc r0
-	loadn r1, #'$'
+	loadn r1, #'$'           
 	outchar r1, r0
-
 	
+	; calcula posição para imprimir valor numérico
 	load r0, jumpLn
 	loadn r1, #1
 	mul r0, r0, r1
 	loadn r1, #3
 	add r0, r0, r1
 	
-	load r1, score
-	load r2, limeColor
-	call printInt	
+	; imprime valor da pontuação
+	load r1, score          
+	load r2, limeColor      
+	call printInt            
 	
+	; restaura registradores
 	pop r2
 	pop r1
 	pop r0
 	rts
 
-; --- Print Score ---		
+; --- Print Score ---
 	
 	
 ; --- Print Liquid ---	
-
 ; @brief: imprime o liquido saindo da garrafa
 ; @param r1: tela do liquido que será impresso
 ; @param r2: cor do liquido que será impresso
 	
 printLiquid:
-	push r0 ; posição da tela em o liquido será impresso
+	push r0 ; posição da tela em que o liquido será impresso
 	push r1 ; tela do liquido que será impresso
-	push r2 ; valor da cor do liquido do texto da tela
-	push r3 ; limitador da altura em que o liquido está, para não substituir o liquido do copo
-	push r4	; auxiliar		
+	push r2 ; cor aplicada ao liquido
+	push r3 ; altura limite para não sobrescrever o copo
+	push r4 ; auxiliar para cálculos	
 	
+	; calcula posição inicial e altura limite
 	load r0, jumpLn
 	loadn r4, #7
 	mul r0, r0, r4
@@ -1228,9 +1236,11 @@ printLiquid:
 	load r4, liquidHeight
 	sub r3, r3, r4
 	
+	; imprime camada limitada do liquido
 	call printLayerLimited
 	
-	pop r4 ; volta os valores anteriores
+	; restaura registradores
+	pop r4
 	pop r3
 	pop r2
 	pop r1
@@ -1240,66 +1250,66 @@ printLiquid:
 ; --- Print Liquid ---		
 
 
-; --- Fill Cup Routine ---	
-			
+; --- Fill Cup Routine ---			
 ; @brief: enche o copo a partir da bebida selecionada
 			
 fillCup:
-	push r0 
-	push r1 
-	push r2 
-	push r3 
-	push r4
-	push r5 
+	push r0 ; tipo de liquido selecionado
+	push r1 ; auxiliar para comparação
+	push r2 ; cor do liquido
+	push r3 ; contador do liquido atual
+	push r4 ; altura do liquido no copo
+	push r5 ; auxiliar para posição e cálculos
 	
+	; verifica tipo de liquido selecionado
 	load r0, liquidType
 	
 	loadn r1, #1
 	cmp r0, r1
-	jeq _fillWithLiquid1
+	jeq _fillWithLiquid1 ; enche com liquido 1
 	
 	loadn r1, #2
 	cmp r0, r1
-	jeq _fillWithLiquid2
+	jeq _fillWithLiquid2 ; enche com liquido 2
 	
 	loadn r1, #3
 	cmp r0, r1
-	jeq _fillWithLiquid3
+	jeq _fillWithLiquid3 ; enche com liquido 3
 	
 	loadn r1, #4
 	cmp r0, r1
-	jeq _fillWithLiquid4
+	jeq _fillWithLiquid4 ; enche com liquido 4
 			
-			
-	_fillWithLiquid1:
+	_fillWithLiquid1: ; configura o liquido da nova camada como liquido 1
 		load r2, darkRedColor
 		load r3, liquid1Count
 		inc r3
 		store liquid1Count, r3
 		jmp _fillingCup
 		
-	_fillWithLiquid2:
+	_fillWithLiquid2: ; configura o liquido da nova camada como liquido 2
 		load r2, yellowColor
 		load r3, liquid2Count
 		inc r3
 		store liquid2Count, r3
 		jmp _fillingCup
 		
-	_fillWithLiquid3:
+	_fillWithLiquid3: ; configura o liquido da nova camada como liquido 3
 		load r2, cyanColor
 		load r3, liquid3Count
 		inc r3
 		store liquid3Count, r3
 		jmp _fillingCup
 		
-	_fillWithLiquid4:
+	_fillWithLiquid4: ; configura o liquido da nova camada como liquido 4
 		load r2, darkBlueColor
 		load r3, liquid4Count
 		inc r3
 		store liquid4Count, r3
 		jmp _fillingCup				
 		
-	_fillingCup:		
+	_fillingCup:
+		; calcula posição do liquido no copo
 		load r3, liquidWidth
 		loadn r4, #2
 		div r3, r3, r4
@@ -1312,21 +1322,24 @@ fillCup:
 		mul r0, r0, r5
 		
 		load r5, middleCol
-		sub  r5, r5, r3	
-		
+		sub r5, r5, r3	
 		add r0, r0, r5
 		load r3, liquidWidth
 		
+		; imprime a camada do liquido do drink
 		load r1, fillChar
 		call printCharSeq
 		
+		; atualiza altura do liquido
 		inc r4
 		store liquidHeight, r4	
 		mov r1, r4
 		call verifyChangeLiquidWidth
 		
+		; animação do liquido
 		call _animationLiquid
 		
+		; imprime garrafa novamente
 		load r0, jumpLn
 		loadn r1, #4
 		mul r0, r0, r1
@@ -1339,7 +1352,7 @@ fillCup:
 		store needClearBottle, r2
 		
 	_fillCupExit:		
-		pop r5	
+		pop r5	; restaura os registradores
 		pop r4
 		pop r3
 		pop r2 
@@ -1347,54 +1360,52 @@ fillCup:
 		pop r0
 		rts	
 		
-		
-	_animationLiquid:
+	_animationLiquid: ; aniamação para encher o copo
 		load r0, frameLiquid
 		loadn r3, #0
 		
+		; troca entre frame 1 e 2 a partir do anterior
 		loadn r1, #LiquidLayer
 		not r0, r0
 		jnz _animationFrameLiquid
- 
-		
 		loadn r1, #Liquid2Layer
 		
-		
+		; atualiza o frame atual
 		_animationFrameLiquid:
 			store frameLiquid, r0	
 			call printLiquid
 		rts
 		
-
-; trata do set point de largura do liquido			
+		
+; --- Verify Change Liquid Width ---
+; @brief: ajusta largura do liquido conforme altura e tipo de copo			
+			
 verifyChangeLiquidWidth:
-	
-	push r0 ; set Point da Largura do Liquido Atual
-	push r1 ; altura do liquido Atual
+	push r0 ; set point da largura do liquido
+	push r1 ; altura atual do liquido
 	push r2 ; tipo do copo
-	push r3 ; lagura atual
+	push r3 ; largura atual do liquido
 	
+	; verifica se atingiu set point
 	load r0, setPointWidth
-	
 	cmp r0, r1
 	jne _verifyChangeLiquidWidthExit
 	
 	_changeLiquidWidth:	
-	
 		loadn r2, #2
-		load  r3, liquidWidth
+		load r3, liquidWidth
 		add r3, r3, r2
 		store liquidWidth, r3
 		
+		; ajuste especial para copo tipo 1
 		loadn r1, #1
-		load  r2, cupType
+		load r2, cupType
 		cmp r1, r2
 		jne _verifyChangeLiquidWidthExit
 		
 	_changeSetPointLiquidWidth:
-		 
-		 loadn r0, #2
-		 store setPointWidth, r0
+		loadn r0, #2
+		store setPointWidth, r0
 		
 	_verifyChangeLiquidWidthExit:
 		pop r3
@@ -1403,93 +1414,102 @@ verifyChangeLiquidWidth:
 		pop r0
 		rts	
 				
-			
-; --- Fill Cup Routine ---				
-		
-			
-; --- Show Recipes ---		
+; --- Verify Change Liquid Width ---				
 
+
+; --- Show Recipes ---
 ; @brief: mostra a tela de receitas
 
 showRecipes:
-	push r0
-	push r1
-	push r2
-	push r3
-	push r4
+	push r0 ; posição inicial da tela
+	push r1 ; endereço da receita a ser exibida
+	push r2 ; cor aplicada ao texto
+	push r3 ; índice da receita atual
+	push r4 ; auxiliar de comparação
 	
+	; seleciona receita conforme índice atual
 	load r3, recipeListIndex
-
-	_selectRecipe:
 	
+	_selectRecipe:
+		; seleciona receita 0
 		loadn r1, #RecipeDrinkDeepOcean
 		loadn r4, #0
 		cmp r3, r4
 		jeq _showRecipeSelected
 		
+		; seleciona receita 1
 		loadn r1, #RecipeDrinkForest
 		loadn r4, #1
 		cmp r3, r4
 		jeq _showRecipeSelected
 		
+		; seleciona receita 2
 		loadn r1, #RecipeDrinkSunshine
 		loadn r4, #2
 		cmp r3, r4
 		jeq _showRecipeSelected
 		
+		; seleciona receita 3
 		loadn r1, #RecipeDrinkRainbow
 		loadn r4, #3
 		cmp r3, r4
 		jeq _showRecipeSelected
 		
+		; seleciona receita 4
 		loadn r1, #RecipeDrinkTropical
 		loadn r4, #4
 		cmp r3, r4
 		jeq _showRecipeSelected
 		
+		; seleciona receita 5
 		loadn r1, #RecipeDrinkPiromancer
 		loadn r4, #5
 		cmp r3, r4
 		jeq _showRecipeSelected
 	
+		; default
 		jmp _showRecipeLoop
 	
-	
 	_showRecipeSelected:
+		; imprime a receita selecionada
 		load r0, jumpLn
 		load r2, whiteColor
 		call printLayer
 		store recipeListIndex, r3
 	
 	_showRecipeLoop:
-	
+		; navegação entre receitas
 		call inputChar
 		load r0, char
 		
+		; avanaça uma receita
 		loadn r1, #'w'
 		cmp r0, r1
 		jeq _showNextRecipe
 		
+		; volta uma receita
 		loadn r1, #'s'
 		cmp r0, r1
 		jeq _showPrevRecipe
 		
+		; sai do livro de receitas
 		loadn r1, #'e'
 		cmp r0, r1
 		jeq _showRecipeExit
 		
+		; default
 		jmp _showRecipeLoop
 		
-	
 	_showNextRecipe:
+		; avança uma receita entre 0-5
 		load r3, recipeListIndex
 		inc r3
 		loadn r4, #6
 		mod r3, r3, r4
 		jmp _selectRecipe
-		
 	
 	_showPrevRecipe:
+		; volta uma receita entre 0-5
 		load r3, recipeListIndex
 		dec r3
 		loadn r4, #0
@@ -1497,12 +1517,12 @@ showRecipes:
 		jeg _selectRecipe
 		loadn r3, #5
 		jmp _selectRecipe
-		
-	
 	
 	_showRecipeExit:
+		; remove o livro da tela
 		call printRecipeClear
 	
+		; restaura os registradores
 		pop r4
 		pop r3
 		pop r2
@@ -1510,16 +1530,17 @@ showRecipes:
 		pop r0
 		rts	
 
+; --- Show Recipes ---
 
-; --- Show Receives ---	
 
-; --- PrintRecipeClear
+; --- PrintRecipeClear ---
+; @brief: limpa a área da tela onde ficam as receitas
 
 printRecipeClear:
-	push r0
-	push r1
-	push r2
-
+	push r0 ; posição inicial da tela
+	push r1 ; endereço da camada de limpeza
+	push r2 ; cor aplicada
+	
 	load r0, jumpLn
 	loadn r1, #RecipeClear
 	load r2, whiteColor
@@ -1530,21 +1551,19 @@ printRecipeClear:
 	pop r0
 	rts
 
+; --- PrintRecipeClear ---
 
-; --- PrintRecipeClear
 
 ; --- Verify Drink Score ---
-
-; @brief: cacula a pontuação total do drink
+; @brief: calcula a pontuação total do drink
 
 verifyDrinkScore:
-	push r0 ; pontuação
-	push r1 ; pedido
-	push r2 ; valor do pedido
+	push r0 ; pontuação acumulada
+	push r1 ; ponteiro para pedido
+	push r2 ; valor esperado do pedido
 	push r3 ; valor do drink feito
-	push r4 ; camadas do liquido do copo
+	push r4 ; índice das camadas do liquido
 	push r5 ; somador de pontos
-	
 	
 	loadn r0, #0       
 	load r1, drinkOrder
@@ -1557,7 +1576,6 @@ verifyDrinkScore:
 	ceq _correct
 	cne _incorrect
 	
-	
 	loadi r2, r1 ; verifica quantidade do liquido 1
 	load  r3, liquid1Count
 	inc   r1
@@ -1565,7 +1583,6 @@ verifyDrinkScore:
 	cmp r3, r2
 	ceq _correct
 	cgr _incorrect
-	
 	
 	loadi r2, r1 ; verifica quantidade do liquido 2
 	load  r3, liquid2Count
@@ -1575,7 +1592,6 @@ verifyDrinkScore:
 	ceq _correct
 	cgr _incorrect
 	
-	
 	loadi r2, r1 ; verifica quantidade do liquido 3
 	load  r3, liquid3Count
 	inc   r1
@@ -1583,7 +1599,6 @@ verifyDrinkScore:
 	cmp r3, r2
 	ceq _correct
 	cgr _incorrect
-	
 	
 	loadi r2, r1 ; verifica quantidade do liquido 4
 	load  r3, liquid4Count
@@ -1593,9 +1608,7 @@ verifyDrinkScore:
 	ceq _correct
 	cgr _incorrect
 	
-	
 	loadn r4, #liquidLevels
-	
 	
 	loadi r2, r1 ; verifica a camada do liquido 0
 	loadi r3, r4
@@ -1606,7 +1619,6 @@ verifyDrinkScore:
 	ceq _correct
 	cne _incorrect
 	
-	
 	loadi r2, r1 ; verifica a camada do liquido 1
 	loadi r3, r4
 	inc r1
@@ -1615,7 +1627,6 @@ verifyDrinkScore:
 	cmp r3, r2
 	ceq _correct
 	cne _incorrect
-	
 	
 	loadi r2, r1 ; verifica a camada do liquido 2
 	loadi r3, r4
@@ -1626,7 +1637,6 @@ verifyDrinkScore:
 	ceq _correct
 	cne _incorrect
 	
-	
 	loadi r2, r1 ; verifica a camada do liquido 3
 	loadi r3, r4
 	inc r1
@@ -1635,7 +1645,6 @@ verifyDrinkScore:
 	cmp r3, r2
 	ceq _correct
 	cne _incorrect
-	
 	
 	loadi r2, r1 ; verifica a camada do liquido 4
 	loadi r3, r4
@@ -1646,7 +1655,6 @@ verifyDrinkScore:
 	ceq _correct
 	cne _incorrect
 	
-	
 	loadi r2, r1 ; verifica a camada do liquido 5
 	loadi r3, r4
 	inc r1
@@ -1655,7 +1663,6 @@ verifyDrinkScore:
 	cmp r3, r2
 	ceq _correct
 	cne _incorrect
-	
 	
 	loadi r2, r1 ; verifica a camada do liquido 6
 	loadi r3, r4
@@ -1666,7 +1673,6 @@ verifyDrinkScore:
 	ceq _correct
 	cne _incorrect
 	
-	
 	loadi r2, r1 ; verifica a camada do liquido 7
 	loadi r3, r4
 	inc r1
@@ -1675,7 +1681,6 @@ verifyDrinkScore:
 	cmp r3, r2
 	ceq _correct
 	cne _incorrect
-	
 	
 	loadi r2, r1 ; verifica a camada do liquido 8
 	loadi r3, r4
@@ -1686,7 +1691,6 @@ verifyDrinkScore:
 	ceq _correct
 	cne _incorrect
 	
-	
 	loadi r2, r1 ; verifica a camada do liquido 9
 	loadi r3, r4
 	inc r1
@@ -1696,13 +1700,14 @@ verifyDrinkScore:
 	ceq _correct
 	cne _incorrect
 	
+	; soma a pontuação atual com a do pedido entregue
 	load r1, score
 	add r1, r1, r0
 	store score, r1
 	
 	call printOrderFinished
 	
-	
+	; restaura os registradores
 	pop r5
 	pop r4
 	pop r3
@@ -1724,95 +1729,95 @@ verifyDrinkScore:
 ; --- Verify Drink Score ---
 
 
-
 ; --- Select Order ---
-
 ; @brief: seleciona o drink do pedido a partir de uma entrada aleatória
 
 SelectOrder:
-	push r0
-	push r1
-	push r2
-	push r3
+	push r0 ; valor aleatório gerado
+	push r1 ; auxiliar de comparação
+	push r2 ; endereço da mensagem ou drink selecionado
+	push r3 ; limite superior para geração aleatória
 	
+	; recupera o valor aleatório
 	loadn r3, #6
 	call inputRandom
 	load r0, random
 	
+	; determina que o pedido é o drink 0
 	loadn r1, #0
 	cmp r0, r1
 	jeq _selectDrinkDeepOcean
 	
+	; determina que o pedido é o drink 1
 	loadn r1, #1
 	cmp r0, r1
 	jeq _selectDrinkForest
 	
-	
+	; determina que o pedido é o drink 2
 	loadn r1, #2
 	cmp r0, r1
 	jeq _selectDrinkSunshine
 	
-	
+	; determina que o pedido é o drink 3
 	loadn r1, #3
 	cmp r0, r1
 	jeq _selectDrinkRainbow
 	
-	
+	; determina que o pedido é o drink 4
 	loadn r1, #4
 	cmp r0, r1
 	jeq _selectDrinkTropical
 	
+	; determina que o pedido é o drink 5
 	loadn r1, #5
 	cmp r0, r1
 	jeq _selectDrinkPiromancer
 	jmp _selectOrderExit
 	
-	
-	_selectDrinkDeepOcean:
+	_selectDrinkDeepOcean: ; configura o sistema de comparação do pedido 0
 		loadn r2, #messageDrinkDeepOcean
 		store messageOrder, r2
 		loadn r2, #drinkDeepOcean
 		store drinkOrder, r2
 		jmp _selectOrderExit
 		
-	_selectDrinkForest:
+	_selectDrinkForest: ; configura o sistema de comparação do pedido 1
 		loadn r2, #messageDrinkForest
 		store messageOrder, r2
 		loadn r2, #drinkForest
 		store drinkOrder, r2
 		jmp _selectOrderExit
 		
-	_selectDrinkSunshine:
+	_selectDrinkSunshine: ; configura o sistema de comparação do pedido 2
 		loadn r2, #messageDrinkSunshine
 		store messageOrder, r2
 		loadn r2, #drinkSunshine
 		store drinkOrder, r2
 		jmp _selectOrderExit
 		
-	_selectDrinkRainbow:
+	_selectDrinkRainbow: ; configura o sistema de comparação do pedido 3
 		loadn r2, #messageDrinkRainbow
 		store messageOrder, r2
 		loadn r2, #drinkRainbow
 		store drinkOrder, r2
 		jmp _selectOrderExit
 		
-	_selectDrinkTropical:
+	_selectDrinkTropical: ; configura o sistema de comparação do pedido 4
 		loadn r2, #messageDrinkTropical
 		store messageOrder, r2
 		loadn r2, #drinkTropical
 		store drinkOrder, r2
 		jmp _selectOrderExit
 		
-	_selectDrinkPiromancer:
+	_selectDrinkPiromancer: ; configura o sistema de comparação do pedido 5
 		loadn r2, #messageDrinkPiromancer
 		store messageOrder, r2
 		loadn r2, #drinkPiromancer
 		store drinkOrder, r2
 		jmp _selectOrderExit					
 		
-		
 	_selectOrderExit:
-		pop r3
+		pop r3 ; restaura registradores
 		pop r2
 		pop r1
 		pop r0
@@ -1822,13 +1827,12 @@ SelectOrder:
 
 
 ; --- Print Order ---
-
-; @brief: impreme o pedido realizado
+; @brief: imprime o pedido realizado
 
 printOrder:
-	push r0
-	push r1
-	push r2
+	push r0 ; posição inicial da tela
+	push r1 ; endereço da mensagem
+	push r2 ; cor aplicada
 	
 	load r0, jumpLn
 	loadn r1, #28
@@ -1856,12 +1860,14 @@ printOrder:
 	
 ; --- Print Order ---	
 
+
 ; --- Print Show Liquids ---
+; @brief: imprime a tela com os líquidos disponíveis
 
 printShowLiquids:
-	push r0
-	push r1
-	push r2
+	push r0 ; posição inicial da tela
+	push r1 ; endereço da camada de líquidos
+	push r2 ; cor aplicada
 	
 	load r0, jumpLn	
 	loadn r1, #2
@@ -1871,6 +1877,7 @@ printShowLiquids:
 	load r2, whiteColor	
 	call printLayer	
 	
+	; informa que os liquidos precisam ser apagados posteriomente
 	loadn r0, #1
 	store needClearLiquids, r0
 	
@@ -1879,14 +1886,16 @@ printShowLiquids:
 	pop r0
 	rts		
 
-; --- Print Show Liquids ---
+; --- Print Show Liquids ---	
+
 
 ; --- Print Clear Show Liquids ---
+; @brief: limpa a área da tela onde os líquidos são exibidos
 
 printClearShowLiquids:
-	push r0
-	push r1
-	push r2
+	push r0 ; posição inicial da tela
+	push r1 ; auxiliar de comparação
+	push r2 ; cor aplicada
 	
 	load r0, needClearLiquids
 	loadn r1, #1
@@ -1910,21 +1919,21 @@ printClearShowLiquids:
 		pop r0
 		rts		
 
-; --- Print Clear Show Liquids ---
+; --- Print Clear Show Liquids ---	
+
 
 ; --- Print Order Finished ---
-
 ; @brief: imprime a mensagem de pedido finalizado
 ; @param r0: pontuação realizada
 
 printOrderFinished:
 	push r0 ; pontuação feita
-	push r1
-	push r2
+	push r1 ; auxiliar
+	push r2 ; cor aplicada
 	
 	mov r1, r0
 	
-	push r1
+	push r1 ; salva pontuação para impressão
 	
 	load r0, jumpLn
 	loadn r2, #5
@@ -1934,7 +1943,7 @@ printOrderFinished:
 	load r2, whiteColor
 	call printLayer
 	
-	pop r1
+	pop r1 ; recupera pontuação
 	
 	load r0, jumpLn
 	loadn r2, #16
@@ -1965,14 +1974,15 @@ printOrderFinished:
 ; --- Print Order Finished ---
 
 ; --- Animation Client ---
+; @brief: executa a animação do cliente chegando e exibindo o balão de fala
 
 animationClient:
-	push r0
-	push r1
-	push r2
-	push r3
-	push r4
-	push r5
+	push r0 ; posição inicial da tela
+	push r1 ; endereço da camada a ser impressa
+	push r2 ; largura inicial da animação
+	push r3 ; contador de linhas da animação
+	push r4 ; temporizador auxiliar
+	push r5 ; contador de iterações do loop
 	
 	load r0, jumpLn	
 	loadn r1, #24
@@ -1985,7 +1995,7 @@ animationClient:
 	
 	_animationClientLoop:
 		inc r5	
-	
+		
 		loadn r4, #20
 		call sleepTimer
 	
@@ -2035,7 +2045,6 @@ animationClient:
 		loadn r4, #25
 		call printStrSleeping
 	
-		
 		pop r5
 		pop r4
 		pop r3
@@ -2045,16 +2054,17 @@ animationClient:
 		rts
 		
 		
-; --- Animation Client ---	 	
+; --- Animation Client ---
 
 ; --- Story init ---
+; @brief: exibe a introdução da história com falas sequenciais
 
 sadStoryDialog:
-	push r0
-	push r1
-	push r2
-	push r3
-	push r4
+	push r0 ; posição inicial da tela
+	push r1 ; endereço da linha de diálogo
+	push r2 ; cor aplicada ao texto
+	push r3 ; auxiliar para cálculo de posição
+	push r4 ; temporizador para controlar velocidade da fala
 	
 	call clearScreen
 	
@@ -2084,7 +2094,7 @@ sadStoryDialog:
 	
 	loadn r4, #5
 	call sleepTimer	
-
+	
 	add r0, r0, r3
 	loadn r1, #dialogInitLine3
 	load  r2, yellowColor
@@ -2149,14 +2159,16 @@ sadStoryDialog:
 	
 ; --- Story init ---
 
+
 ; --- Story end ---
-	
+; @brief: exibe a conclusão da história com falas finais
+
 theEndDialog:
-	push r0
-	push r1
-	push r2
-	push r3
-	push r4	
+	push r0 ; posição inicial da tela
+	push r1 ; endereço da linha de mensagem final
+	push r2 ; cor aplicada ao texto
+	push r3 ; auxiliar para cálculo de posição
+	push r4 ; temporizador para controlar velocidade da fala	
 	
 	call clearScreen
 	
@@ -2181,16 +2193,16 @@ theEndDialog:
 	add r0, r0, r3
 	loadn r1, #messageWinLine2
 	load  r2, yellowColor
-	loadn r4, #20
+	loadn r4, #10
 	call printStrSleeping
 	
 	loadn r4, #20
 	call sleepTimer	
-
+	
 	add r0, r0, r3
 	loadn r1, #messageWinLine3
 	load  r2, redColor
-	loadn r4, #20
+	loadn r4, #10
 	call printStrSleeping
 	
 	loadn r4, #20
@@ -2199,7 +2211,7 @@ theEndDialog:
 	add r0, r0, r3
 	loadn r1, #messageWinLine4
 	load  r2, blueColor
-	loadn r4, #20
+	loadn r4, #10
 	call printStrSleeping
 	
 	loadn r4, #20
@@ -2208,7 +2220,7 @@ theEndDialog:
 	add r0, r0, r3
 	loadn r1, #messageWinLine5
 	load  r2, whiteColor
-	loadn r4, #20
+	loadn r4, #10
 	call printStrSleeping
 	
 	loadn r4, #20
@@ -2217,7 +2229,7 @@ theEndDialog:
 	add r0, r0, r3
 	loadn r1, #messageWinLine6
 	load  r2, greyColor
-	loadn r4, #20
+	loadn r4, #10
 	call printStrSleeping
 	
 	loadn r4, #20
@@ -2231,8 +2243,7 @@ theEndDialog:
 	pop r0
 	rts
 	
-
-; --- Story end ---	
+; --- Story end ---
 
 ; ----------- Fim Rotinas do Sistema de Drinks --------
 
